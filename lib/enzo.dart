@@ -11,7 +11,9 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
   late RiveAnimationController successAnimation;
   late RiveAnimationController failAnimation;
   late StateMachineController _stateController;
-  bool handsUp = false;
+  bool isLoading = false;
+  bool isError = false;
+  bool isSuccess = false;
   late SMIInput<bool> handsUpController;
   late SMIInput<bool> failController;
   late SMIInput<bool> successController;
@@ -113,6 +115,12 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
                       hintText: 'Mail ou identifiant',
                     ),
                     onChanged: (value) {
+                      if (isError || isSuccess) {
+                        setState(() {
+                          isSuccess = false;
+                          isError = false;
+                        });
+                      }
                       oeilController.value = value.length * 5;
                     },
                     controller: loginController,
@@ -128,9 +136,33 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
                       border: UnderlineInputBorder(),
                       hintText: 'Mail ou identifiant',
                     ),
+                    onChanged: (value) {
+                      if (isError || isSuccess) {
+                        setState(() {
+                          isSuccess = false;
+                          isError = false;
+                        });
+                      }
+                    },
                     controller: mdpController,
                   ),
                   const SizedBox(height: 10),
+                  if (isSuccess) ...[
+                    const SizedBox(height: 10),
+                    const Center(
+                        child: Text(
+                      'Bravo ! Vous êtes connectés !',
+                      style: TextStyle(color: Colors.green),
+                    )),
+                  ],
+                  if (isError) ...[
+                    const SizedBox(height: 10),
+                    const Center(
+                        child: Text(
+                          'Mauvais login / mot de passe',
+                          style: TextStyle(color: Colors.red),
+                        )),
+                  ],
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
                     child: ClipRRect(
@@ -139,24 +171,46 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
                         color: Colors.blueAccent,
                         child: InkWell(
                           onTap: () {
+                            setState(() {
+                              isLoading = true;
+                              isSuccess = false;
+                              isError = false;
+                            });
                             FocusScope.of(context).unfocus();
                             failController.value = false;
                             successController.value = false;
                             Future.delayed(const Duration(seconds: 2)).then((value) {
                               if (mdpController.text == 'yoloyolo' && loginController.text == 'remileboss') {
                                 successController.value = true;
+                                setState(() {
+                                  isLoading = false;
+                                  isError = false;
+                                  isSuccess = true;
+                                });
                               } else {
                                 failController.value = true;
+                                setState(() {
+                                  isLoading = false;
+                                  isError = true;
+                                  isSuccess = false;
+                                });
                               }
                             });
                           },
-                          child: const Padding(
-                            padding: EdgeInsets.all(8.0),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
                             child: Center(
-                                child: Text(
-                              'Se connecter',
-                              style: TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                            )),
+                                child: isLoading
+                                    ? const SizedBox(
+                                        height: 24,
+                                        width: 24,
+                                        child: CircularProgressIndicator(color: Colors.white),
+                                      )
+                                    : const Text(
+                                        'Se connecter',
+                                        style:
+                                            TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                      )),
                           ),
                         ),
                       ),
