@@ -15,21 +15,26 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
   late SMIInput<bool> handsUpController;
   late SMIInput<bool> failController;
   late SMIInput<bool> successController;
+  late SMIInput<double> oeilController;
+  late SMIInput<bool> checkingController;
 
   final mdpController = TextEditingController();
   final loginController = TextEditingController();
   FocusNode _focus = FocusNode();
+  FocusNode _focusLogin = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _focus.addListener(_onFocusChange);
+    _focusLogin.addListener(_onFocusChangeLogin);
   }
 
   @override
   void dispose() {
     super.dispose();
     _focus.removeListener(_onFocusChange);
+    _focusLogin.removeListener(_onFocusChangeLogin);
     _focus.dispose();
   }
 
@@ -38,6 +43,16 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
       handsUpController.value = true;
     } else {
       handsUpController.value = false;
+    }
+  }
+
+  void _onFocusChangeLogin() {
+    if (_focusLogin.hasFocus) {
+      print('bonjour bonjour');
+      checkingController.value = true;
+    } else {
+      print('aurevoir aurevoir');
+      checkingController.value = false;
     }
   }
 
@@ -51,6 +66,8 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
     handsUpController = _stateController.findInput<bool>('isHandsUp')!;
     failController = _stateController.findInput<bool>('trigFail')!;
     successController = _stateController.findInput<bool>('trigSuccess')!;
+    oeilController = _stateController.findInput<double>('numLook')!;
+    checkingController = _stateController.findInput<bool>('isChecking')!;
     failController.value = true;
     successController.value = true;
   }
@@ -90,10 +107,14 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
                 children: [
                   Text('Identifiant', style: titleStyle),
                   TextField(
+                    focusNode: _focusLogin,
                     decoration: const InputDecoration(
                       border: UnderlineInputBorder(),
                       hintText: 'Mail ou identifiant',
                     ),
+                    onChanged: (value) {
+                      oeilController.value = value.length * 5;
+                    },
                     controller: loginController,
                   ),
                   const SizedBox(height: 24),
