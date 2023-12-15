@@ -15,8 +15,31 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
   late SMIInput<bool> handsUpController;
 
   final mdpController = TextEditingController();
-
   final loginController = TextEditingController();
+  FocusNode _focus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focus.addListener(_onFocusChange);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _focus.removeListener(_onFocusChange);
+    _focus.dispose();
+  }
+
+  void _onFocusChange() {
+    debugPrint("Focus: ${_focus.hasFocus.toString()}");
+    if (_focus.hasFocus) {
+      handsUpController.value = true;
+    } else {
+      handsUpController.value = false;
+    }
+    handsUp = !handsUp;
+  }
 
   void _onInit(Artboard art) {
     print('onInit has been called');
@@ -27,17 +50,6 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
       _stateController = ctrl;
     });
     handsUpController = _stateController.findInput<bool>('isHandsUp')!;
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    // handsDownAnimation = OneShotAnimation('hands_down', autoplay: false, onStop: () {
-    //   handsUp = false;
-    // });
-    // handsUpAnimation = OneShotAnimation('Hands_up', autoplay: false, onStop: () {
-    //   handsUp = true;
-    // });
   }
 
   @override
@@ -84,6 +96,7 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
                   const SizedBox(height: 24),
                   Text('Mot de passe', style: titleStyle),
                   TextField(
+                    focusNode: _focus,
                     obscureText: true,
                     enableSuggestions: false,
                     autocorrect: false,
@@ -102,12 +115,8 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
                         color: Colors.blueAccent,
                         child: InkWell(
                           onTap: () {
-                            if (handsUp) {
-                              handsUpController.value = false;
-                            } else {
-                              handsUpController.value = true;
-                            }
-                            handsUp = !handsUp;
+                            //handsUpController.value = false;
+                            FocusScope.of(context).unfocus();
                           },
                           child: const Padding(
                             padding: EdgeInsets.all(8.0),
