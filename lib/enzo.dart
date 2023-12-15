@@ -8,11 +8,13 @@ class EnzoAuraitDuFaireCaPage extends StatefulWidget {
 
 class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
   final titleStyle = const TextStyle(fontSize: 16, fontWeight: FontWeight.bold);
-  late RiveAnimationController handsDownAnimation;
-  late RiveAnimationController handsUpAnimation;
+  late RiveAnimationController successAnimation;
+  late RiveAnimationController failAnimation;
   late StateMachineController _stateController;
   bool handsUp = false;
   late SMIInput<bool> handsUpController;
+  late SMIInput<bool> failController;
+  late SMIInput<bool> successController;
 
   final mdpController = TextEditingController();
   final loginController = TextEditingController();
@@ -32,17 +34,14 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
   }
 
   void _onFocusChange() {
-    debugPrint("Focus: ${_focus.hasFocus.toString()}");
     if (_focus.hasFocus) {
       handsUpController.value = true;
     } else {
       handsUpController.value = false;
     }
-    handsUp = !handsUp;
   }
 
   void _onInit(Artboard art) {
-    print('onInit has been called');
     var ctrl = StateMachineController.fromArtboard(art, 'Login Machine') as StateMachineController;
     ctrl.isActive = false;
     art.addController(ctrl);
@@ -50,6 +49,10 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
       _stateController = ctrl;
     });
     handsUpController = _stateController.findInput<bool>('isHandsUp')!;
+    failController = _stateController.findInput<bool>('trigFail')!;
+    successController = _stateController.findInput<bool>('trigSuccess')!;
+    failController.value = true;
+    successController.value = true;
   }
 
   @override
@@ -72,7 +75,7 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
                 animations: const [
                   'idle'
                 ], //, 'Hands_up', 'hands_down', 'success', 'fail', 'Look_down_right', 'Look_down_left', 'look_idle'],
-                //controllers: [handsDownAnimation, handsUpAnimation],
+                //controllers: [successAnimation, failAnimation],
               ),
             ),
           ),
@@ -115,8 +118,16 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
                         color: Colors.blueAccent,
                         child: InkWell(
                           onTap: () {
-                            //handsUpController.value = false;
                             FocusScope.of(context).unfocus();
+                            failController.value = false;
+                            successController.value = false;
+                            Future.delayed(const Duration(seconds: 2)).then((value) {
+                              if (mdpController.text == 'yoloyolo' && loginController.text == 'remileboss') {
+                                successController.value = true;
+                              } else {
+                                failController.value = true;
+                              }
+                            });
                           },
                           child: const Padding(
                             padding: EdgeInsets.all(8.0),
