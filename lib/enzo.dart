@@ -11,9 +11,41 @@ class _LoginPageState extends State<LoginPage> {
   bool isLoading = false;
   bool isError = false;
   bool isSuccess = false;
+  final _loginFocusNode = FocusNode();
 
   final mdpController = TextEditingController();
   final loginController = TextEditingController();
+  late StateMachineController _stateController;
+  late SMIInput<bool> checkingController;
+
+  @override
+  void initState() {
+    super.initState();
+    _loginFocusNode.addListener(_onLoginFocusChange);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _loginFocusNode.removeListener(_onLoginFocusChange);
+    _loginFocusNode.dispose();
+  }
+
+  void _onLoginFocusChange() {
+    if (_loginFocusNode.hasFocus) {
+      checkingController.value = true;
+    } else {
+      checkingController.value = false;
+    }
+  }
+
+  void _onInit(Artboard art) {
+    var ctrl = StateMachineController.fromArtboard(art, 'Login Machine') as StateMachineController;
+    ctrl.isActive = false;
+    art.addController(ctrl);
+    _stateController = ctrl;
+    checkingController = _stateController.findInput<bool>('isChecking')!;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +58,6 @@ class _LoginPageState extends State<LoginPage> {
             child: IntrinsicHeight(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                //mainAxisSize: MainAxisSize.min,
                 children: [
                   Flexible(child: Container()),
                   Padding(
@@ -34,9 +65,11 @@ class _LoginPageState extends State<LoginPage> {
                     child: Container(
                       color: Colors.black,
                       height: 300,
-                      child: const RiveAnimation.asset(
+                      child: RiveAnimation.asset(
                         'assets/teddy.riv',
                         fit: BoxFit.fitHeight,
+                        onInit: _onInit,
+                        animations: const ['idle'],
                       ),
                     ),
                   ),
@@ -51,6 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           Text('Identifiant', style: titleStyle),
                           TextField(
+                            focusNode: _loginFocusNode,
                             decoration: const InputDecoration(
                               border: UnderlineInputBorder(),
                               hintText: 'Mail ou identifiant',
