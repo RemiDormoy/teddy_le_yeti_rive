@@ -78,149 +78,162 @@ class _EnzoAuraitDuFaireCaPageState extends State<EnzoAuraitDuFaireCaPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFD6E2EA),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 50),
-            child: Container(
-              color: Colors.black,
-              height: 300,
-              child: RiveAnimation.asset(
-                'assets/teddy.riv',
-                onInit: _onInit,
-                fit: BoxFit.fitHeight,
-                animations: const [
-                  'idle'
-                ], //, 'Hands_up', 'hands_down', 'success', 'fail', 'Look_down_right', 'Look_down_left', 'look_idle'],
-                //controllers: [successAnimation, failAnimation],
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 30),
-            child: Container(
-              decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text('Identifiant', style: titleStyle),
-                  TextField(
-                    focusNode: _focusLogin,
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      hintText: 'Mail ou identifiant',
-                    ),
-                    onChanged: (value) {
-                      if (isError || isSuccess) {
-                        setState(() {
-                          isSuccess = false;
-                          isError = false;
-                        });
-                      }
-                      oeilController.value = value.length * 5;
-                    },
-                    controller: loginController,
-                  ),
-                  const SizedBox(height: 24),
-                  Text('Mot de passe', style: titleStyle),
-                  TextField(
-                    focusNode: _focus,
-                    obscureText: true,
-                    enableSuggestions: false,
-                    autocorrect: false,
-                    decoration: const InputDecoration(
-                      border: UnderlineInputBorder(),
-                      hintText: 'Mail ou identifiant',
-                    ),
-                    onChanged: (value) {
-                      if (isError || isSuccess) {
-                        setState(() {
-                          isSuccess = false;
-                          isError = false;
-                        });
-                      }
-                    },
-                    controller: mdpController,
-                  ),
-                  const SizedBox(height: 10),
-                  if (isSuccess) ...[
-                    const SizedBox(height: 10),
-                    const Center(
-                        child: Text(
-                      'Bravo ! Vous êtes connectés !',
-                      style: TextStyle(color: Colors.green),
-                    )),
-                  ],
-                  if (isError) ...[
-                    const SizedBox(height: 10),
-                    const Center(
-                        child: Text(
-                          'Mauvais login / mot de passe',
-                          style: TextStyle(color: Colors.red),
-                        )),
-                  ],
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: Material(
-                        color: Colors.blueAccent,
-                        child: InkWell(
-                          onTap: () {
-                            setState(() {
-                              isLoading = true;
-                              isSuccess = false;
-                              isError = false;
-                            });
-                            FocusScope.of(context).unfocus();
-                            failController.value = false;
-                            successController.value = false;
-                            Future.delayed(const Duration(seconds: 2)).then((value) {
-                              if (mdpController.text == 'yoloyolo' && loginController.text == 'remileboss') {
-                                successController.value = true;
-                                setState(() {
-                                  isLoading = false;
-                                  isError = false;
-                                  isSuccess = true;
-                                });
-                              } else {
-                                failController.value = true;
-                                setState(() {
-                                  isLoading = false;
-                                  isError = true;
-                                  isSuccess = false;
-                                });
-                              }
-                            });
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Center(
-                                child: isLoading
-                                    ? const SizedBox(
-                                        height: 24,
-                                        width: 24,
-                                        child: CircularProgressIndicator(color: Colors.white),
-                                      )
-                                    : const Text(
-                                        'Se connecter',
-                                        style:
-                                            TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
-                                      )),
-                          ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  //mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(child: Container()),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                      child: Container(
+                        color: Colors.black,
+                        height: 300,
+                        child: RiveAnimation.asset(
+                          'assets/teddy.riv',
+                          onInit: _onInit,
+                          fit: BoxFit.fitHeight,
+                          animations: const [
+                            'idle'
+                          ], //, 'Hands_up', 'hands_down', 'success', 'fail', 'Look_down_right', 'Look_down_left', 'look_idle'],
+                          //controllers: [successAnimation, failAnimation],
                         ),
                       ),
                     ),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 30),
+                      child: Container(
+                        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(10)),
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text('Identifiant', style: titleStyle),
+                            TextField(
+                              focusNode: _focusLogin,
+                              decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                hintText: 'Mail ou identifiant',
+                              ),
+                              onChanged: (value) {
+                                if (isError || isSuccess) {
+                                  setState(() {
+                                    isSuccess = false;
+                                    isError = false;
+                                  });
+                                }
+                                oeilController.value = value.length * 5;
+                              },
+                              controller: loginController,
+                            ),
+                            const SizedBox(height: 24),
+                            Text('Mot de passe', style: titleStyle),
+                            TextField(
+                              focusNode: _focus,
+                              obscureText: true,
+                              enableSuggestions: false,
+                              autocorrect: false,
+                              decoration: const InputDecoration(
+                                border: UnderlineInputBorder(),
+                                hintText: 'Mail ou identifiant',
+                              ),
+                              onChanged: (value) {
+                                if (isError || isSuccess) {
+                                  setState(() {
+                                    isSuccess = false;
+                                    isError = false;
+                                  });
+                                }
+                              },
+                              controller: mdpController,
+                            ),
+                            const SizedBox(height: 10),
+                            if (isSuccess) ...[
+                              const SizedBox(height: 10),
+                              const Center(
+                                  child: Text(
+                                'Bravo ! Vous êtes connectés !',
+                                style: TextStyle(color: Colors.green),
+                              )),
+                            ],
+                            if (isError) ...[
+                              const SizedBox(height: 10),
+                              const Center(
+                                  child: Text(
+                                    'Mauvais login / mot de passe',
+                                    style: TextStyle(color: Colors.red),
+                                  )),
+                            ],
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: Material(
+                                  color: Colors.blueAccent,
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        isLoading = true;
+                                        isSuccess = false;
+                                        isError = false;
+                                      });
+                                      FocusScope.of(context).unfocus();
+                                      failController.value = false;
+                                      successController.value = false;
+                                      Future.delayed(const Duration(seconds: 2)).then((value) {
+                                        if (mdpController.text == 'yoloyolo' && loginController.text == 'remileboss') {
+                                          successController.value = true;
+                                          setState(() {
+                                            isLoading = false;
+                                            isError = false;
+                                            isSuccess = true;
+                                          });
+                                        } else {
+                                          failController.value = true;
+                                          setState(() {
+                                            isLoading = false;
+                                            isError = true;
+                                            isSuccess = false;
+                                          });
+                                        }
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Center(
+                                          child: isLoading
+                                              ? const SizedBox(
+                                                  height: 24,
+                                                  width: 24,
+                                                  child: CircularProgressIndicator(color: Colors.white),
+                                                )
+                                              : const Text(
+                                                  'Se connecter',
+                                                  style:
+                                                      TextStyle(fontSize: 16, color: Colors.white, fontWeight: FontWeight.bold),
+                                                )),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Flexible(child: Container()),
+                  ],
+                ),
               ),
             ),
-          ),
-        ],
+          );
+        }
       ),
     );
   }
